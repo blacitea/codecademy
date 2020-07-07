@@ -80,20 +80,20 @@ while (playField._map[position[1]][position[0]] !== hat && playField._map[positi
   
   let instruction = prompt('Where to go? ')
   switch (instruction.toLowerCase()) {
-    case 'u':
+    case 'w':
       position[1]--;
       break;
-    case 'd':
+    case 's':
       position[1]++;
       break;
-    case 'l':
+    case 'a':
       position[0]--;
       break;
-    case 'r':
+    case 'd':
       position[0]++;
       break;
     default:
-      console.log('Invaild input [u: up, d: down, l: left, r: right')
+      console.log('Invaild input [W: up, S: down, A: left, D: right')
   };
   counter++;
   if (position[0] > playField._map.length || position[1] > playField._map.length || position[0] < 0 || position[1] < 0) {
