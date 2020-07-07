@@ -26,39 +26,39 @@ class Field {
         map[y].push(fieldCharacter);
       };
     };
+
     // new function to generate random location within the field
-    let randomLocation = function () {
-      return [Math.floor(Math.random() * width), Math.floor(Math.random() * height)];
+    let randomSpot = function (num) {
+      return Math.floor(Math.random() * num);
     }
-    // ensure hatLocation !== starting point
-    let hatLocation = [0, 0];
-    while (hatLocation[0] === 0 && hatLocation[1] === 0) {
-      hatLocation = randomLocation();
-    };
-    let hatX = hatLocation[0];
-    let hatY = hatLocation[1];
+
+    // generate hat's location
+    let hatX = randomSpot(width);
+    let hatY = randomSpot(height);
+
     // change the symbol of hat's location
     map[hatY][hatX] = hat;
+    
+    // array.flat() or array.reduce((acc, val) => acc.concat(val), [])
+    const flattened = map => [].concat(...map);
 
-    let holeLocation = [];
     // while the hole : field ratio less than 30%, keep generating holes
-    while (holeLocation.length / (width * height) < 0.3) {
-      let potentialHole = randomLocation();
-      let stringPotentialHole = potentialHole.toString();
-      if (stringPotentialHole !== '0,0' // hole !== starting poing
-        && stringPotentialHole !== hatLocation.toString() // hole !== hatLocation
-        && !holeLocation.toString().includes(stringPotentialHole)
-        // new hole !== old hole, used array.toString() for includes as [1,3] === [1,3] return false
-      ) {
-        holeLocation.push(potentialHole);
+    
+    let ocurrance = (arr, value) =>
+      flattened(arr).reduce((a, v) =>
+        v === value ? a + 1 : a, 0);
+    
+    let holeRatio = 0;
+    
+    while (holeRatio < 0.3) {
+      let holeX = randomSpot(width);
+      let holeY = randomSpot(height);
+      if (!(holeX === hatX && holeY === hatY)) {
+        map[holeY][holeX] = hole;
+        holeRatio = ocurrance(map, hole)/flattened(map).length;
       }
     };
-    // change the symbol of hole's location
-    for (let i = 0; i < holeLocation.length; i++) {
-      let holeX = holeLocation[i][0];
-      let holeY = holeLocation[i][1];
-      map[holeY][holeX] = hole;
-    }
+    
     // create a new Field instance with the map generated
       return new Field(map);
     }
@@ -66,41 +66,48 @@ class Field {
 
 
 
-/* Game code */
+// Game code 
+
 let fieldwidth = prompt('How wide is the field?'); // ask user to design field size
 let fieldheight = prompt('How long is the field?');
 let playField = Field.generateField(fieldheight, fieldwidth); // generate field with user input
-let position = [0, 0]; // starting position
+let positionX = Math.floor(Math.random() * fieldwidth);
+let positionY = Math.floor(Math.random() * fieldheight); // starting position
 let counter = 0; 
 let startTime = Date.now();
 
-while (playField._map[position[1]][position[0]] !== hat && playField._map[position[1]][position[0]] !== hole) {
-  playField._map[position[1]][position[0]] = pathCharacter;
+while (playField._map[positionY][positionX] === hat || playField._map[positionY][positionX] === hole) {
+  positionX = Math.floor(Math.random() * fieldwidth);
+  positionY = Math.floor(Math.random() * fieldheight);
+};
+
+while (playField._map[positionY][positionX] !== hat && playField._map[positionY][positionX] !== hole) {
+  playField._map[positionY][positionX] = pathCharacter;
   playField.print();
   
   let instruction = prompt('Where to go? ')
   switch (instruction.toLowerCase()) {
-    case 'u':
-      position[1]--;
+    case 'w':
+      positionY--;
+      break;
+    case 's':
+      positionY++;
+      break;
+    case 'a':
+      positionX--;
       break;
     case 'd':
-      position[1]++;
-      break;
-    case 'l':
-      position[0]--;
-      break;
-    case 'r':
-      position[0]++;
+      positionX++;
       break;
     default:
-      console.log('Invaild input [u: up, d: down, l: left, r: right')
+      console.log('Invaild input [w: up, s: down, a: left, d: right')
   };
   counter++;
-  if (position[0] > playField._map.length || position[1] > playField._map.length || position[0] < 0 || position[1] < 0) {
+  if (positionX >= playField._map.length || positionY >= playField._map.length || positionX < 0 || positionY < 0) {
     console.log('Oops! You left without finding the hat!');
     break;
   }
-  switch (playField._map[position[1]][position[0]]) {
+  switch (playField._map[positionY][positionX]) {
     case hat:
       let finishTime = Date.now()
       let secSpent = (finishTime - startTime)/1000;
@@ -114,4 +121,5 @@ while (playField._map[position[1]][position[0]] !== hat && playField._map[positi
       break;
   }
 }
+
 
