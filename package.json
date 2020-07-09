@@ -1,0 +1,24 @@
+{
+  "name": "tryingbabel",
+  "version": "1.0.0",
+  "description": "trying to do babel in my computer",
+  "main": "buildALibrary.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src -d lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blacitea/codecademy.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/blacitea/codecademy/issues"
+  },
+  "homepage": "https://github.com/blacitea/codecademy#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0"
+  }
+}
